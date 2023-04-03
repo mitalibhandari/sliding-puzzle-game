@@ -1,0 +1,24 @@
+"""
+    Mitali Bhandari
+    CS 5001 -- Fall 21
+    Project
+    Design File -- To explain program
+"""
+
+I designed the puzzle game as mario puzzle game. 
+A splash screen is displayed after you start the game. 
+A dialog box appears to write the player's name.
+After that, Number box appears. Player can enter the number of moves they want.
+
+As soon as the player enters number of moves, game board is constructed.
+The game board consists of three main areas:
+1. Puzzle Area: 
+    - First area on the left side has the puzzle pieces which are scrambled.
+    - It contains one blank image which helps player to move the puzzles.
+2. Player Name:
+    - On the right side, name of the player is displayed.
+3. Button Area:
+    - This area is present at the bottom of the game board.
+    - It has 3 buttons, quit, reset and load.
+    - When the player clicks on the quit button, the game ends. 
+    - Moves selected by the player are displayed on the bottom left side. 
