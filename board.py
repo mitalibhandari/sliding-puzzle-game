@@ -1,6 +1,7 @@
 import turtle
 from draw_rectangle import DrawRectangle
 from text_rectangle import TextRectangle
+from button_service import ButtonService
 
 LEADERBOARD_WIDTH = 250
 LEADERBOARD_HEIGHT = 495
@@ -104,14 +105,3 @@ class Board:
     
     def get_input_num(self):
         return self.number_of_moves
-
-screen = turtle.Screen()
-board = Board(screen)
-board.set_spalsh_screen("./Resources/splash_screen.gif")
-board.user_input()
-board.make_leaderboard_area()
-board.make_game_area()
-board.make_button_area()
-moves = board.get_input_num()
-board.display_player_move(moves)
-screen.exitonclick()
