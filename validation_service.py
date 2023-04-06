@@ -159,6 +159,9 @@ class ValidationService:
 
     def get_valid_status(self):
         return self.valid
+
+    def get_file_content(self):
+        return self.file_content
     
     def error_logging(self):
         """

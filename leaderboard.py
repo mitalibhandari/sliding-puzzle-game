@@ -53,4 +53,42 @@ class LeaderBoard:
                     TextRectangle(info, x, y, 'blue', 15).write_text()
                 
                 y -= 32
+    
+    def update_leaderboard(self, player_move, user_name):
+        """
+        Function: update_leaderboard
+        Update the player record to the self.file_content
+        :param player_move: int
+        :param user_name: str
+        :return: None
+        """
+        if len(self.file_content) > 0:
+            for i in range(len(self.file_content)):
+                score = int(self.file_content[i][0])
+
+                # insert in the front of the first score that is greater than player moves
+                if player_move <= score:
+                    new_list = [player_move, user_name]
+                    self.file_content.insert(i, new_list)
+                    break 
+                
+                if i == len(self.file_content) - 1:
+                    self.file_content.append([player_move, user_name])
+        # empty file
+        else:
+            self.file_content.append([player_move, user_name])
+
+        self.write_leaderboard()
+    
+    def write_leaderboard(self):
+        self.file_content = self.file_content[:10]
+        with open(self.file.file, mode='w') as f:
+            for i in range(len(self.file_content)):
+                content = self.file_content[i]
+                if len(content) > 1:
+                    f.write(f"{content[0]} : {content[1]} \n")
+                    
+
+
+
 

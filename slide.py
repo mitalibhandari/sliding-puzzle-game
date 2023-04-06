@@ -39,7 +39,7 @@ class Slide:
         self.t.penup()
         self.t.goto(self.x - self.size/2, self.y - self.size/2)
         self.t.pendown()
-        self.t.pensize(2)
+        self.t.pensize(2) 
         for i in range(4):
             self.t.forward(self.size)
             self.t.left(90)

@@ -11,16 +11,20 @@ from slide_game import Game
 def main():
 
     game = Game()
-    game.start_screen()
-    game.make_screen()
+    
+    # game.start_screen()
+    # game.make_screen()
+
     game.make_button()
+
     game.intro_theme()
     game.create_page()
+    game.on_click_position() 
 
-    screen = turtle.Screen()
-    screen.exitonclick()
+    turtle.mainloop()
+
+    # screen = turtle.Screen()
+    # screen.exitonclick()
 
 if __name__ == "__main__":
     main()
-
-

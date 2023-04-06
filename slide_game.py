@@ -169,6 +169,154 @@ class Game:
         random.shuffle(self.slides)
         self.create_slide_page()
 
+    def click_check(self, x, y):
+        """
+        Function: click_check
+        Check whether the click hits the blank slide or the button
+        :param x: (float) click x coordinate
+        :param y: (float) click y coordinate
+        :return: None
+        """
+        
+        quit_boundary = self.quit_button.get_button_boundary()
+        reset_boundary = self.reset_button.get_button_boundary()
+        load_boundary = self.load_button.get_button_boundary()
+
+        blank_boundary = self.blank.get_boundary()
+        blank_x_lower = blank_boundary[1]
+        blank_y_lower = blank_boundary[3]
+
+        # if click is on the quit button
+        if (
+            quit_boundary[1] <= x <= quit_boundary[0] and 
+            quit_boundary[3] <= y <= quit_boundary[2]
+        ):
+            self.quit_button.quit_service()
+
+        # if click is on the reset button
+        elif (
+            reset_boundary[1] <= x <= reset_boundary[0] and 
+            reset_boundary[3] <= y <= reset_boundary[2]
+        ):
+            self.reset_slides()
+        
+        # if click is on the load button
+        elif (
+            load_boundary[1] <= x <= load_boundary[0] and 
+            load_boundary[3] <= y <= load_boundary[2]
+        ):
+            self.load_slides()
+            
+    
+    
+
+    def reset_slides(self):
+        """
+        function: reset_slides
+        Helper function to reset slides once user clicks on the reset button 
+        """
+        # make sure nothing happens when user hits reset button twice in a row
+        reset = True 
+        for i in range(len(self.slides)):
+            if self.slides[i].name != self.unscrambled_slides[i]:
+                reset = False 
+    
+        # if first time hitting reset
+        if not reset:
+            self.slides = []
+            for i in range(self.num_of_slides):
+                # create new slide with unscrambled slides
+                slide = Slide(self.unscrambled_slides[i], self.s, self.tile_size)
+                slide.check_blank_status()
+                self.slides.append(slide)
+                if slide.blank:
+                    self.blank = slide 
+            self.create_slide_page() 
+
+    def load_slides(self):
+        """
+        function: load_slides
+        Helper function to load new slides once user clicks on the reset button 
+        """
+        # check that theme is valid
+        self.theme.reload_warning() 
+            
+        # remove existing slides and logo 
+        for i in range(len(self.slides)):
+            self.slides[i].remove_slide()
+        self.logo.remove_image()
+
+        # clear player moves
+        self.player_moves = 0
+        self.board.display_player_move(self.player_moves)
+
+        # display new slides and logo  
+        self.intro_theme()
+        self.create_page() 
+
+    def on_click_position(self):
+        self.s.onclick(self.click_check)
+
+    def check_win_or_lose(self):
+        self.lose_game()
+        self.win_game()
+    
+    def check_move_num(self):
+        """
+        Function: check_move_num
+        Check if the player moves are less than or equal to total moves 
+        :return: None
+        """
+        # return self.player_moves <= self.move_num 
+        return True 
+    
+    def check_win_game(self):
+        """
+        Function: check_win_game
+        Check if the slide list is the same with the unscrambled list
+        :return: None
+        """
+        # for i in range(self.num_of_slides):
+        #     if self.slides[i].name != self.unscrambled_slides[i]:
+        #         return False 
+        return True 
+
+    def lose_game(self):
+        """
+        Function: lose_game
+        if the player has lost the game then show lose image and exit
+        :return: None
+        """
+        if not self.check_move_num() and not self.check_win_game():
+            self.s.ontimer(self.set_screen(PATH_REC + LOSE_MSG), 2000) 
+            self.s.ontimer(self.set_screen(PATH_REC + CREDIT), 2000) 
+            self.s.ontimer(turtle.bye, 1000)
+
+    def win_game(self):
+        """
+        Function: win_game
+        if the user wins the game then show the win image and exit 
+        :return: None
+        """
+        if self.check_move_num() and self.check_win_game():
+            self.leaderboard_text.update_leaderboard(self.player_moves, self.user_name) 
+            self.s.ontimer(self.set_screen(PATH_REC + WIN_MSG), 2000) 
+            self.s.ontimer(self.set_screen(PATH_REC + CREDIT), 2000) 
+            self.s.ontimer(turtle.bye, 1000)
+
+    def set_screen(self, bgpic):
+        """
+        Function: set_screen
+        Set screen for losing or winning or ending game
+        :param bgpic: (str) background pic name
+        :return: None
+        """
+        self.s.addshape(bgpic)
+        self.t.shape(bgpic)
+        self.t.showturtle()
+        self.t.penup()
+        self.s.ontimer(self.t.goto(0,0), 2000)
+
 
 
 
