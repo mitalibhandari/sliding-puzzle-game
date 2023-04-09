@@ -12,8 +12,8 @@ def main():
 
     game = Game()
     
-    # game.start_screen()
-    # game.make_screen()
+    game.start_screen()
+    game.make_screen()
 
     game.make_button()
 
@@ -22,9 +22,6 @@ def main():
     game.on_click_position() 
 
     turtle.mainloop()
-
-    # screen = turtle.Screen()
-    # screen.exitonclick()
 
 if __name__ == "__main__":
     main()

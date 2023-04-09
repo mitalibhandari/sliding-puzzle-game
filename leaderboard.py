@@ -38,11 +38,12 @@ class LeaderBoard:
         Display leaderboard info in self.file_content
         :return: None
         """
+        t = turtle.Turtle()
         x = LEADERBOARD_TEXT_X_START
         y = LEADERBOARD_TEXT_Y_START
 
         
-        TextRectangle("Leaders:", x, y, 'blue', 18).write_text()
+        TextRectangle(t, "Leaders:", x, y, 'blue', 18).write_text()
         y -= 30
         if len(self.file_content) > 0:
             for content in self.file_content:
@@ -50,7 +51,7 @@ class LeaderBoard:
                     player_move = content[0]
                     user_name = content[1]
                     info = f"{player_move} : {user_name}"
-                    TextRectangle(info, x, y, 'blue', 15).write_text()
+                    TextRectangle(t, info, x, y, 'blue', 15).write_text()
                 
                 y -= 32
     

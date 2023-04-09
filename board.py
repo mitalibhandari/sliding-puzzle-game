@@ -96,7 +96,7 @@ class Board:
     
     def display_player_move(self, play_move):
         play_move_count = f"Player Moves: {play_move}"
-        text = TextRectangle(play_move_count, MOVE_TEXT_X_START, MOVE_TEXT_Y_START, 'black', 20)
+        text = TextRectangle(self.t, play_move_count, MOVE_TEXT_X_START, MOVE_TEXT_Y_START, 'black', 20)
         text.remove_text()
         text.write_text()
     

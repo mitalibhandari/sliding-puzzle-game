@@ -7,7 +7,7 @@ This is TextRectangle helper file to display text in the game
 import turtle
 class TextRectangle:
 
-    def __init__(self, text, x, y, color, pensize):
+    def __init__(self, t, text, x, y, color, pensize):
         """
         Constructor Function
         :param text: text sentence that is displayed
@@ -17,7 +17,7 @@ class TextRectangle:
         :param pensize: pensize of the text
         :return none.,
         """
-        self.t = turtle.Turtle()
+        self.t = t
 
         self.text = text 
         self.x = x 

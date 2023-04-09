@@ -181,11 +181,7 @@ class Game:
         quit_boundary = self.quit_button.get_button_boundary()
         reset_boundary = self.reset_button.get_button_boundary()
         load_boundary = self.load_button.get_button_boundary()
-
-        blank_boundary = self.blank.get_boundary()
-        blank_x_lower = blank_boundary[1]
-        blank_y_lower = blank_boundary[3]
-
+        
         # if click is on the quit button
         if (
             quit_boundary[1] <= x <= quit_boundary[0] and 
@@ -206,9 +202,44 @@ class Game:
             load_boundary[3] <= y <= load_boundary[2]
         ):
             self.load_slides()
-            
+        
+        # if the click is on the blank slide
+        else:
+            self.swap_slides(x, y) 
     
-    
+    def swap_slides(self, x, y):
+        blank_boundary = self.blank.get_boundary()
+        blank_x_lower = blank_boundary[1]
+        blank_y_lower = blank_boundary[3]
+
+        for i in range(len(self.slides)):
+            slide = self.slides[i]
+            slide_boundary = slide.get_boundary()
+            x_upper = slide_boundary[0]
+            x_lower = slide_boundary[1]
+            y_upper = slide_boundary[2]
+            y_lower = slide_boundary[3]
+
+            # if click hits one slide and it's around blank slide
+
+            if (x_lower + y_lower - self.tile_size - 3 == blank_x_lower + blank_y_lower
+                ) or (x_lower + y_lower + self.tile_size + 3 == blank_x_lower + blank_y_lower):
+                if x_lower <= x <= x_upper and y_lower <= y <= y_upper:
+
+                    # swap slides 
+                    temp_name = self.blank.name
+                    self.blank.switch_position(slide.name)
+                    slide.switch_position(temp_name)
+
+                    slide.blank = True 
+                    self.blank.blank = False 
+
+                    # redefine blank slide
+                    self.blank = slide
+                    self.player_moves += 1
+                    self.board.display_player_move(self.player_moves)
+                    self.check_win_or_lose()
+                    break 
 
     def reset_slides(self):
         """
@@ -267,8 +298,7 @@ class Game:
         Check if the player moves are less than or equal to total moves 
         :return: None
         """
-        # return self.player_moves <= self.move_num 
-        return True 
+        return self.player_moves <= self.move_num 
     
     def check_win_game(self):
         """
@@ -276,9 +306,9 @@ class Game:
         Check if the slide list is the same with the unscrambled list
         :return: None
         """
-        # for i in range(self.num_of_slides):
-        #     if self.slides[i].name != self.unscrambled_slides[i]:
-        #         return False 
+        for i in range(self.num_of_slides):
+            if self.slides[i].name != self.unscrambled_slides[i]:
+                return False 
         return True 
 
     def lose_game(self):
