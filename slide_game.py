@@ -142,23 +142,21 @@ class Game:
         slide_y_start = LEADERBOARD_Y_START + LEADERBOARD_HEIGHT - 90
 
         self.logo.display_button()
-
+        # customize each puzzle size row
         row_num = math.sqrt(self.num_of_slides)
         for i in range(self.num_of_slides):
             self.slides[i].position_slide(slide_x_start, slide_y_start)
 
-            # record blank slide coordinate 
+            # record blank slide coordinate
             if self.slides[i].blank:
                 self.blank.x = slide_x_start
                 self.blank.y = slide_y_start
-            
-            # draw row and column 
-
-            if (i+1) % row_num == 0:
+            # draw each row and column
+            if (i + 1) % row_num == 0:
                 slide_x_start = GAME_X_START + self.tile_size
-                slide_y_start -= self.tile_size + 3 
+                slide_y_start -= self.tile_size + 3
             else:
-                slide_x_start += self.tile_size + 3 
+                slide_x_start += self.tile_size + 3
     
     def create_page(self):
         """
@@ -194,96 +192,79 @@ class Game:
             reset_boundary[1] <= x <= reset_boundary[0] and 
             reset_boundary[3] <= y <= reset_boundary[2]
         ):
-            self.reset_slides()
+            # make sure nothing happens when user hits reset button twice in a row
+            reset = True 
+            for i in range(len(self.slides)):
+                if self.slides[i].name != self.unscrambled_slides[i]:
+                    reset = False 
+        
+            # if first time hitting reset
+            if not reset:
+                self.slides = []
+                for i in range(self.num_of_slides):
+                    # create new slide with unscrambled slides
+                    slide = Slide(self.unscrambled_slides[i], self.s, self.tile_size)
+                    slide.check_blank_status()
+                    self.slides.append(slide)
+                    if slide.blank:
+                        self.blank = slide 
+                self.create_slide_page() 
         
         # if click is on the load button
         elif (
             load_boundary[1] <= x <= load_boundary[0] and 
             load_boundary[3] <= y <= load_boundary[2]
         ):
-            self.load_slides()
+            # check that theme is valid
+            self.theme.reload_warning() 
+                
+            # remove existing slides and logo 
+            for i in range(len(self.slides)):
+                self.slides[i].remove_slide()
+            self.logo.remove_image()
+
+            # clear player moves
+            self.player_moves = 0
+            self.board.display_player_move(self.player_moves)
+
+            # display new slides and logo  
+            self.intro_theme()
+            self.create_page() 
         
         # if the click is on the blank slide
         else:
-            self.swap_slides(x, y) 
-    
-    def swap_slides(self, x, y):
-        blank_boundary = self.blank.get_boundary()
-        blank_x_lower = blank_boundary[1]
-        blank_y_lower = blank_boundary[3]
+            blank_boundary = self.blank.get_boundary()
+            blank_x_lower = blank_boundary[1]
+            blank_y_lower = blank_boundary[3]
 
-        for i in range(len(self.slides)):
-            slide = self.slides[i]
-            slide_boundary = slide.get_boundary()
-            x_upper = slide_boundary[0]
-            x_lower = slide_boundary[1]
-            y_upper = slide_boundary[2]
-            y_lower = slide_boundary[3]
+            for i in range(len(self.slides)):
+                slide = self.slides[i]
+                slide_boundary = slide.get_boundary()
+                x_upper = slide_boundary[0]
+                x_lower = slide_boundary[1]
+                y_upper = slide_boundary[2]
+                y_lower = slide_boundary[3]
 
-            # if click hits one slide and it's around blank slide
+                # if click hits one slide and it's around blank slide
 
-            if (x_lower + y_lower - self.tile_size - 3 == blank_x_lower + blank_y_lower
-                ) or (x_lower + y_lower + self.tile_size + 3 == blank_x_lower + blank_y_lower):
-                if x_lower <= x <= x_upper and y_lower <= y <= y_upper:
+                if (x_lower + y_lower - self.tile_size - 3 == blank_x_lower + blank_y_lower
+                    ) or (x_lower + y_lower + self.tile_size + 3 == blank_x_lower + blank_y_lower):
+                    if x_lower <= x <= x_upper and y_lower <= y <= y_upper:
 
-                    # swap slides 
-                    temp_name = self.blank.name
-                    self.blank.switch_position(slide.name)
-                    slide.switch_position(temp_name)
+                        # swap slides 
+                        temp_name = self.blank.name
+                        self.blank.switch_position(slide.name)
+                        slide.switch_position(temp_name)
 
-                    slide.blank = True 
-                    self.blank.blank = False 
+                        slide.blank = True 
+                        self.blank.blank = False 
 
-                    # redefine blank slide
-                    self.blank = slide
-                    self.player_moves += 1
-                    self.board.display_player_move(self.player_moves)
-                    self.check_win_or_lose()
-                    break 
-
-    def reset_slides(self):
-        """
-        function: reset_slides
-        Helper function to reset slides once user clicks on the reset button 
-        """
-        # make sure nothing happens when user hits reset button twice in a row
-        reset = True 
-        for i in range(len(self.slides)):
-            if self.slides[i].name != self.unscrambled_slides[i]:
-                reset = False 
-    
-        # if first time hitting reset
-        if not reset:
-            self.slides = []
-            for i in range(self.num_of_slides):
-                # create new slide with unscrambled slides
-                slide = Slide(self.unscrambled_slides[i], self.s, self.tile_size)
-                slide.check_blank_status()
-                self.slides.append(slide)
-                if slide.blank:
-                    self.blank = slide 
-            self.create_slide_page() 
-
-    def load_slides(self):
-        """
-        function: load_slides
-        Helper function to load new slides once user clicks on the reset button 
-        """
-        # check that theme is valid
-        self.theme.reload_warning() 
-            
-        # remove existing slides and logo 
-        for i in range(len(self.slides)):
-            self.slides[i].remove_slide()
-        self.logo.remove_image()
-
-        # clear player moves
-        self.player_moves = 0
-        self.board.display_player_move(self.player_moves)
-
-        # display new slides and logo  
-        self.intro_theme()
-        self.create_page() 
+                        # redefine blank slide
+                        self.blank = slide
+                        self.player_moves += 1
+                        self.board.display_player_move(self.player_moves)
+                        self.check_win_or_lose()
+                        break 
 
     def on_click_position(self):
         self.s.onclick(self.click_check)
